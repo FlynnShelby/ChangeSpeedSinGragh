@@ -21,6 +21,8 @@
 		600CBA32292F523C00A17BD9 /* SineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600CBA31292F523C00A17BD9 /* SineView.swift */; };
 		600CBA34292F6EBE00A17BD9 /* SineCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600CBA33292F6EBE00A17BD9 /* SineCurveView.swift */; };
 		600CBA36292F951700A17BD9 /* SineCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 600CBA35292F951700A17BD9 /* SineCurveVC.swift */; };
+		60BD1E4E2934587200DA0EF0 /* ChangeSpeedSineCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BD1E4D2934587100DA0EF0 /* ChangeSpeedSineCurveView.swift */; };
+		60BD1E50293458EB00DA0EF0 /* ChangeSpeedSineCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BD1E4F293458EB00DA0EF0 /* ChangeSpeedSineCurveVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		600CBA31292F523C00A17BD9 /* SineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SineView.swift; sourceTree = "<group>"; };
 		600CBA33292F6EBE00A17BD9 /* SineCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SineCurveView.swift; sourceTree = "<group>"; };
 		600CBA35292F951700A17BD9 /* SineCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SineCurveVC.swift; sourceTree = "<group>"; };
+		60BD1E4D2934587100DA0EF0 /* ChangeSpeedSineCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSpeedSineCurveView.swift; sourceTree = "<group>"; };
+		60BD1E4F293458EB00DA0EF0 /* ChangeSpeedSineCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSpeedSineCurveVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +119,7 @@
 				600CBA2F292F176B00A17BD9 /* HomeVC.swift */,
 				600CBA2D292F150400A17BD9 /* SinGraghVC.swift */,
 				600CBA35292F951700A17BD9 /* SineCurveVC.swift */,
+				60BD1E4F293458EB00DA0EF0 /* ChangeSpeedSineCurveVC.swift */,
 				600CBA37292F955800A17BD9 /* view */,
 				600CBA01292F13A300A17BD9 /* Main.storyboard */,
 				600CBA04292F13A800A17BD9 /* Assets.xcassets */,
@@ -146,6 +151,7 @@
 			children = (
 				600CBA31292F523C00A17BD9 /* SineView.swift */,
 				600CBA33292F6EBE00A17BD9 /* SineCurveView.swift */,
+				60BD1E4D2934587100DA0EF0 /* ChangeSpeedSineCurveView.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -286,6 +292,8 @@
 				600CBA30292F176B00A17BD9 /* HomeVC.swift in Sources */,
 				600CBA34292F6EBE00A17BD9 /* SineCurveView.swift in Sources */,
 				600CBA00292F13A300A17BD9 /* ViewController.swift in Sources */,
+				60BD1E50293458EB00DA0EF0 /* ChangeSpeedSineCurveVC.swift in Sources */,
+				60BD1E4E2934587200DA0EF0 /* ChangeSpeedSineCurveView.swift in Sources */,
 				600CBA32292F523C00A17BD9 /* SineView.swift in Sources */,
 				600CB9FC292F13A300A17BD9 /* AppDelegate.swift in Sources */,
 				600CB9FE292F13A300A17BD9 /* SceneDelegate.swift in Sources */,
