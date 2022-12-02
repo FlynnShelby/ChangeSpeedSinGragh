@@ -1,15 +1,15 @@
 //
-//  ChangeSpeedSineCurveVC.swift
+//  ChangeSpeedCurveVC.swift
 //  ChangeSpeedSinGragh
 //
-//  Created by XieLinFu_Mac on 2022/11/28.
+//  Created by XieLinFu_Mac on 2022/12/2.
 //
 
 import UIKit
 
-class ChangeSpeedSineCurveVC: UIViewController {
-    
-    var sineView = ChangeSpeedSineCurveView()
+class ChangeSpeedCurveVC: UIViewController {
+
+    var sineView = ChangeSpeedCurveView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +21,4 @@ class ChangeSpeedSineCurveVC: UIViewController {
         
         view.addSubview(sineView)
     }
-    
-
-  
 }

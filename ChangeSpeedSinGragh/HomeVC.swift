@@ -12,7 +12,7 @@ let KScreenH = UIScreen.main.bounds.height
 
 class HomeVC: UIViewController {
 
-    var titleArr: [String] = ["Sin常规曲线","Sin上移","Sin下移","Sin左移","Sin右移","Sin周期大小","Sin幅度大小","Sin周期数量","Sin半周期-上升","Sin半周期-下降","Sin变速曲线","Sin可增减变速曲线","Sin自定义变速曲线"]
+    var titleArr: [String] = ["Sin常规曲线","Sin上移","Sin下移","Sin左移","Sin右移","Sin周期大小","Sin幅度大小","Sin周期数量","Sin半周期-上升","Sin半周期-下降","Sin多段连续曲线","Sin变速曲线","Sin可增减变速曲线","Sin自定义变速曲线"]
     
     var tableView = UITableView(frame: CGRectZero, style: .grouped)
     
@@ -107,9 +107,16 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource{
             sinVC.sineView.funcParams = (50.0,200.0,-1/4*200,50.0,0.5)
             vc = sinVC
             break
-        case 10://变速曲线(多段sine曲线无缝连接)
-            let sinVC = ChangeSpeedSineCurveVC()
+        case 10://Sin多段连续曲线
+            let sinVC = MultipleSineCurveVC()
             sinVC.sineView.pointArr = [CGPoint(x: 0, y: 0),CGPoint(x: 30, y: 200),CGPoint(x:50, y: 100),CGPoint(x: 100, y: 150),CGPoint(x: 120, y: 50),CGPoint(x: 160, y: 120),CGPoint(x: 200, y: 180),CGPoint(x: 240, y: 110),CGPoint(x: 300, y: 50)]
+            
+            vc = sinVC
+            break
+        case 11://Sin变速曲线
+            let sinVC = ChangeSpeedCurveVC()
+            sinVC.sineView.maxTime = 30.0
+            sinVC.sineView.pointArr = [CGPoint(x: 0, y: 1),CGPoint(x: 10, y: 10),CGPoint(x: 20, y: 0.1),CGPoint(x: 30, y: 6)]
             
             vc = sinVC
             break
