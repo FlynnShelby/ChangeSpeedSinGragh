@@ -38,10 +38,10 @@ class DoubelYChangeSpeedCurveView: UIView {
         }
     }
     
-    var funcParamsArr:[DoubelYMonotonicSineMode] = []
+    var funcParamsArr:[DoubleYMonotonicSineMode] = []
     
-    private func createSineFuncParamsArr()->[DoubelYMonotonicSineMode]{
-        var arr:[DoubelYMonotonicSineMode] = []
+    private func createSineFuncParamsArr()->[DoubleYMonotonicSineMode]{
+        var arr:[DoubleYMonotonicSineMode] = []
         if pointArr.count > 1 {
             
             //从第二个点开始创建model
@@ -49,7 +49,7 @@ class DoubelYChangeSpeedCurveView: UIView {
                 let start = pointArr[i-1]
                 let end = pointArr[i]
                 
-                let model = DoubelYMonotonicSineMode(p0: start, p1: end)
+                let model = DoubleYMonotonicSineMode(p0: start, p1: end)
                 
                 arr.append(model)
             }

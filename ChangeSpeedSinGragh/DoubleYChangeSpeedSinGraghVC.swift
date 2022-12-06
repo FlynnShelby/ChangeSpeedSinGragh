@@ -1,16 +1,16 @@
 //
-//  DoubelYChangeSpeedCurveVC.swift
+//  DoubleYChangeSpeedSinGraghVC.swift
 //  ChangeSpeedSinGragh
 //
-//  Created by XieLinFu_Mac on 2022/12/2.
+//  Created by XieLinFu_Mac on 2022/12/6.
 //
 
 import UIKit
 //MARK: 双Y坐标变速曲线（Y轴将分为>1和<1的上下两部分，上下部分的单位量不同）
-class DoubelYChangeSpeedCurveVC: UIViewController {
+class DoubleYChangeSpeedSinGraghVC: UIViewController {
 
-    var sineView = DoubelYChangeSpeedCurveView()
-
+    var sineView = DoubleYChangeSpeedSinGraghView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -20,6 +20,10 @@ class DoubelYChangeSpeedCurveVC: UIViewController {
         sineView.backgroundColor = .cyan
         
         view.addSubview(sineView)
+        
+        
     }
    
+
+
 }

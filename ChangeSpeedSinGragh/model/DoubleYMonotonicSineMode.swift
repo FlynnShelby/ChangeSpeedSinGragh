@@ -1,5 +1,5 @@
 //
-//  DoubelYMonotonicSineMode.swift
+//  DoubleYMonotonicSineMode.swift
 //  ChangeSpeedSinGragh
 //
 //  Created by XieLinFu_Mac on 2022/12/3.
@@ -41,7 +41,7 @@ import UIKit
         v>=1: h=(H/2)-(v-1)/10*(H/2)
         v<1:  h=(H/2)-(v-1)*(H/2)
  */
-class DoubelYMonotonicSineMode: NSObject {
+class DoubleYMonotonicSineMode: NSObject {
     //双Y坐标系(实际值)
     //起点
     var p0:CGPoint = CGPoint(x: 0, y: 1)
