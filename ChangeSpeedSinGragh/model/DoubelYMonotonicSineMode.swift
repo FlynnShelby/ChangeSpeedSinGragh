@@ -129,14 +129,14 @@ class DoubelYMonotonicSineMode: NSObject {
        return a*sin(w*x+p)+d
     }
 
-    //计算视图坐标h
+    //计算视图坐标h(y=>h)
     func getPointYAtView(_ x:CGFloat,_ o:CGPoint) -> CGFloat {
         let y = solveSineFunctionWithX(x)
         let h = (o.y)-y/10*(o.y)
         return h
     }
     
-    //计算实际值
+    //计算实际值(y=>v)
     func getRealValue(_ x:CGFloat) -> CGFloat {
         let y = solveSineFunctionWithX(x)
         
@@ -145,5 +145,30 @@ class DoubelYMonotonicSineMode: NSObject {
         }else{
             return 1+y/10
         }
+    }
+    
+    //v=>h
+    class func getPointYAtView(_ v:CGFloat, o:CGPoint) -> CGFloat {
+        var h = 0.0
+        if v >= 1 {
+            h=(o.y)-(v-1)/10*(o.y)
+        }else{
+            h=(o.y)-(v-1)*(o.y)
+        }
+        
+        return h
+    }
+    
+    //h=>v
+    class func getValueWithPointYAtView(_ h:CGFloat,o:CGPoint)->CGFloat {
+        var v = 0.0
+        
+        if h <= o.y {
+            v=(o.y-h)/o.y*10+1
+        }else{
+            v=1+(o.y-h)/o.y
+        }
+        
+        return v
     }
 }

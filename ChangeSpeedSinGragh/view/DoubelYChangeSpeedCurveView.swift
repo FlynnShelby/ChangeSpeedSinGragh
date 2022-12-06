@@ -31,21 +31,6 @@ class DoubelYChangeSpeedCurveView: UIView {
         }
     }
     
-    //y轴描点步长（pt）
-    private let step_y:CGFloat = 1.0
-    //y轴每个点（pt）所对应的速度
-    private var y_v:CGFloat {
-        get {
-            if bounds.height > 0 {
-                let unit_v = maxSpeed / (bounds.height / 2)
-                return unit_v
-            }
-            return 0.05
-        }
-    }
-
-   
-    
     //峰值点
     var pointArr: [CGPoint] = [] {
         didSet {
