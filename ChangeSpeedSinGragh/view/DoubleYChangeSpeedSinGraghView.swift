@@ -170,7 +170,7 @@ class DoubleYChangeSpeedSinGraghView: UIView {
         let ym0 = bounds.height/2-(bounds.height/2*(maxSpeed-1)/maxSpeed)/2
         lineDash.move(to: CGPoint(x: 0, y:ym0))
         lineDash.addLine(to: CGPoint(x: bounds.width, y: ym0))
-        //0.65
+        //0.55
         let ym1 = bounds.height/2 + (bounds.height/2*(maxSpeed-1)/maxSpeed)/2
         lineDash.move(to: CGPoint(x: 0, y:ym1))
         lineDash.addLine(to: CGPoint(x: bounds.width, y: ym1))

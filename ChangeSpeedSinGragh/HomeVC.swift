@@ -9,6 +9,8 @@ import UIKit
 
 let KScreenW = UIScreen.main.bounds.width
 let KScreenH = UIScreen.main.bounds.height
+let KStatusBarH = UIApplication.shared.statusBarFrame.height
+let KSafeBottom = (KStatusBarH != 20.0 ? 34.0 : 0.0)
 
 class HomeVC: UIViewController {
 
@@ -130,6 +132,13 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource{
             break
         case 13://可调节变速曲线
             let sinVC = DoubleYChangeSpeedSinGraghVC()
+            sinVC.sineView.maxTime = 35.0
+            sinVC.sineView.pointArr = [CGPoint(x: 0, y: 1),CGPoint(x: 10, y: 10),CGPoint(x: 20, y: 0.2),CGPoint(x: 30, y: 6),CGPoint(x: 35, y: 6)]
+            
+            vc = sinVC
+            break
+        case 14://可增减变速曲线
+            let sinVC = DoubleYChangeSpeedSineCurveVC()
             sinVC.sineView.maxTime = 35.0
             sinVC.sineView.pointArr = [CGPoint(x: 0, y: 1),CGPoint(x: 10, y: 10),CGPoint(x: 20, y: 0.2),CGPoint(x: 30, y: 6),CGPoint(x: 35, y: 6)]
             

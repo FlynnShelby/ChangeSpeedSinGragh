@@ -26,6 +26,8 @@
 		601B5BD7293EEDA60021F9D9 /* DoubleYMonotonicSinGraghModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601B5BD6293EEDA60021F9D9 /* DoubleYMonotonicSinGraghModel.swift */; };
 		601B5BD9293F22220021F9D9 /* DoubleYChangeSpeedCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601B5BD8293F22220021F9D9 /* DoubleYChangeSpeedCurveVC.swift */; };
 		601B5BDB293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601B5BDA293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift */; };
+		601B5BDD294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601B5BDC294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift */; };
+		601B5BDF294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 601B5BDE294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift */; };
 		60249A1A2936F7FA0017926E /* ChangeSpeedCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60249A192936F7FA0017926E /* ChangeSpeedCurveView.swift */; };
 		60249A1D2936F8660017926E /* SineParamsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60249A1C2936F8660017926E /* SineParamsModel.swift */; };
 		60249A1F2939AB190017926E /* MonotonicSineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60249A1E2939AB190017926E /* MonotonicSineModel.swift */; };
@@ -76,6 +78,8 @@
 		601B5BD6293EEDA60021F9D9 /* DoubleYMonotonicSinGraghModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleYMonotonicSinGraghModel.swift; sourceTree = "<group>"; };
 		601B5BD8293F22220021F9D9 /* DoubleYChangeSpeedCurveVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleYChangeSpeedCurveVC.swift; sourceTree = "<group>"; };
 		601B5BDA293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleYChangeSpeedSinGraghVC.swift; sourceTree = "<group>"; };
+		601B5BDC294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleYChangeSpeedSineCurveView.swift; sourceTree = "<group>"; };
+		601B5BDE294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleYChangeSpeedSineCurveVC.swift; sourceTree = "<group>"; };
 		60249A192936F7FA0017926E /* ChangeSpeedCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeSpeedCurveView.swift; sourceTree = "<group>"; };
 		60249A1C2936F8660017926E /* SineParamsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SineParamsModel.swift; sourceTree = "<group>"; };
 		60249A1E2939AB190017926E /* MonotonicSineModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonotonicSineModel.swift; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 				60249A202939DB940017926E /* ChangeSpeedCurveVC.swift */,
 				601B5BD8293F22220021F9D9 /* DoubleYChangeSpeedCurveVC.swift */,
 				601B5BDA293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift */,
+				601B5BDE294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift */,
 				60249A1B2936F8480017926E /* model */,
 				600CBA37292F955800A17BD9 /* view */,
 				600CBA01292F13A300A17BD9 /* Main.storyboard */,
@@ -179,6 +184,7 @@
 				60249A192936F7FA0017926E /* ChangeSpeedCurveView.swift */,
 				60249A222939F0D70017926E /* DoubleYChangeSpeedCurveView.swift */,
 				601B5BD4293EEC2E0021F9D9 /* DoubleYChangeSpeedSinGraghView.swift */,
+				601B5BDC294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -327,12 +333,14 @@
 			files = (
 				601B5BDB293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift in Sources */,
 				60249A212939DB940017926E /* ChangeSpeedCurveVC.swift in Sources */,
+				601B5BDF294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift in Sources */,
 				600CBA2E292F150400A17BD9 /* SinGraghVC.swift in Sources */,
 				601B5BD5293EEC2F0021F9D9 /* DoubleYChangeSpeedSinGraghView.swift in Sources */,
 				600CBA36292F951700A17BD9 /* SineCurveVC.swift in Sources */,
 				600CBA30292F176B00A17BD9 /* HomeVC.swift in Sources */,
 				600CBA34292F6EBE00A17BD9 /* SineCurveView.swift in Sources */,
 				60249A1D2936F8660017926E /* SineParamsModel.swift in Sources */,
+				601B5BDD294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift in Sources */,
 				600CBA00292F13A300A17BD9 /* ViewController.swift in Sources */,
 				60BD1E50293458EB00DA0EF0 /* MultipleSineCurveVC.swift in Sources */,
 				60249A232939F0D80017926E /* DoubleYChangeSpeedCurveView.swift in Sources */,

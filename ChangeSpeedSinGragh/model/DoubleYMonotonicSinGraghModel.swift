@@ -38,10 +38,10 @@ class DoubleYMonotonicSinGraghModel: NSObject {
     var p1:CGPoint = CGPoint(x: 10, y: 10)
     //x轴单位时长s
     var step_t = 0.1
-    //原点
+    //原点/标准速1.0x对应视图坐标
     var o:CGPoint = CGPoint(x: 0, y: 100)
     
-    init(p0: CGPoint, p1: CGPoint, step_t: Double = 0.1, o:CGPoint) {
+    init(p0: CGPoint = CGPoint(x: 0, y: 1), p1: CGPoint = CGPoint(x: 10, y: 10), step_t: Double = 0.1, o:CGPoint = CGPoint(x: 0, y: 100)) {
         self.p0 = p0
         self.p1 = p1
         self.step_t = step_t
@@ -50,6 +50,19 @@ class DoubleYMonotonicSinGraghModel: NSObject {
         //实际坐标转数学坐标
         self.start = CGPoint(x: p0.x/step_t, y: Self.getPointYAtView(p0.y, o: o))
         self.end = CGPoint(x: p1.x/step_t, y: Self.getPointYAtView(p1.y, o: o))
+        
+        a = abs(end.y-start.y)/2.0
+        T = abs(end.x-start.x)*2
+        w = 2*CGFloat.pi/T
+        if start.y < end.y {//上升
+            offsetX =  -T/4
+            d = start.y + a
+        }else{//下降
+            offsetX =  T/4
+            d = end.y + a
+        }
+        
+        p = w*offsetX
     }
    
     
@@ -60,53 +73,22 @@ class DoubleYMonotonicSinGraghModel: NSObject {
     var end: CGPoint = CGPoint(x: 100, y: 10)
         
     //振幅
-    var a: CGFloat {
-        get {
-            abs(end.y-start.y)/2.0
-        }
-    }
+    var a: CGFloat = 0.0
     //周期T
-    var T: CGFloat {
-        get {
-            abs(end.x-start.x)*2
-        }
-    }
+    var T: CGFloat = 200.0
+    
     //波长缩放倍率
-    var w:CGFloat {
-        get {
-            return 2*CGFloat.pi/T
-        }
-    }
+    var w:CGFloat = 2*CGFloat.pi/100.0
     
     //x偏移量，<0右移，>0左移
     //注：变速曲线只取两点之间单调上升或下降的部分，因此需偏移1/4个周期
-    var offsetX: CGFloat {
-        get {
-            if start.y < end.y {//上升
-                return -T/4
-            }else{//下降
-                return T/4
-            }
-        }
-    }
+    var offsetX: CGFloat = -50.0
     
     //参数p
-    var p:CGFloat {
-        get {
-            return w*offsetX
-        }
-    }
+    var p:CGFloat = -CGFloat.pi/2
     
     //y偏移量，>0上移,<0下移
-    var d: CGFloat {
-        get {
-            if start.y < end.y {//上升
-                return start.y + a
-            }else{//下降
-                return end.y + a
-            }
-        }
-    }
+    var d: CGFloat
     //周期数(半个周期)
     let num: CGFloat = 0.5
     
