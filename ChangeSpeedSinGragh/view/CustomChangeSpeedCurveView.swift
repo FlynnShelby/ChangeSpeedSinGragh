@@ -94,6 +94,8 @@ class CustomChangeSpeedCurveView: UIView {
             }
         }
     }
+    //每次动画移动的距离pt
+    var marginXForAnimate = 1.0
     //开始播放时刻
     private var playDate = Date()
     //误差时间（毫秒）
@@ -442,13 +444,13 @@ class CustomChangeSpeedCurveView: UIView {
         }
         
         //间隔距离pt
-        let margin = 1.0
+        let margin = marginXForAnimate > 0 ? marginXForAnimate : 2.0
         
         let x = currentTime/x_t + margin
         let v = getValueWithTime(currentTime)
         currentPoint = CGPoint(x: x*x_t, y: v)
         var rec = timeLine.frame
-        rec.origin.x += margin
+        rec.origin.x = min(x, bounds.width)
         let duration = x_t/v
         
         //误差时间（DispatchQueue每轮代码运行耗时）

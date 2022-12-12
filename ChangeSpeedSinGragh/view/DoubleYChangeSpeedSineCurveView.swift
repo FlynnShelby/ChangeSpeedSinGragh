@@ -390,6 +390,7 @@ class DoubleYChangeSpeedSineCurveView: UIView {
         self.offsetTime = 0.0
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+duration-offT){
             [weak self,rec,nowD] in
+            guard self != nil else {return}
             self?.timeLine.frame = rec
             print("3  t=\(self!.currentTime) date=\(dateFormate.string(from: Date()))")
             self?.offsetTime = Date().timeIntervalSince(nowD)-(duration-offT)

@@ -234,7 +234,11 @@ class CustomChangeSpeedCurveVC: UIViewController {
     @objc func smartFillFrameBtnClicked(_ sender:UIButton){
         sender.isSelected = !sender.isSelected
         
-        
+        if sender.isSelected {
+            sineView.marginXForAnimate = 1.0
+        }else{
+            sineView.marginXForAnimate = 2.0
+        }
     }
     
     //是否所有控制点的速度都>1
