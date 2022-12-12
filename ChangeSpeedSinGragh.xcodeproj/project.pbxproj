@@ -35,6 +35,8 @@
 		60249A232939F0D80017926E /* DoubleYChangeSpeedCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60249A222939F0D70017926E /* DoubleYChangeSpeedCurveView.swift */; };
 		60BD1E4E2934587200DA0EF0 /* MultipleSineCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BD1E4D2934587100DA0EF0 /* MultipleSineCurveView.swift */; };
 		60BD1E50293458EB00DA0EF0 /* MultipleSineCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BD1E4F293458EB00DA0EF0 /* MultipleSineCurveVC.swift */; };
+		60EA0DF52946C1F000E96CFD /* CustomChangeSpeedCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EA0DF42946C1F000E96CFD /* CustomChangeSpeedCurveView.swift */; };
+		60EA0DF72946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EA0DF62946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +89,8 @@
 		60249A222939F0D70017926E /* DoubleYChangeSpeedCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoubleYChangeSpeedCurveView.swift; sourceTree = "<group>"; };
 		60BD1E4D2934587100DA0EF0 /* MultipleSineCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleSineCurveView.swift; sourceTree = "<group>"; };
 		60BD1E4F293458EB00DA0EF0 /* MultipleSineCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleSineCurveVC.swift; sourceTree = "<group>"; };
+		60EA0DF42946C1F000E96CFD /* CustomChangeSpeedCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChangeSpeedCurveView.swift; sourceTree = "<group>"; };
+		60EA0DF62946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChangeSpeedCurveVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +152,7 @@
 				601B5BD8293F22220021F9D9 /* DoubleYChangeSpeedCurveVC.swift */,
 				601B5BDA293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift */,
 				601B5BDE294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift */,
+				60EA0DF62946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift */,
 				60249A1B2936F8480017926E /* model */,
 				600CBA37292F955800A17BD9 /* view */,
 				600CBA01292F13A300A17BD9 /* Main.storyboard */,
@@ -185,6 +190,7 @@
 				60249A222939F0D70017926E /* DoubleYChangeSpeedCurveView.swift */,
 				601B5BD4293EEC2E0021F9D9 /* DoubleYChangeSpeedSinGraghView.swift */,
 				601B5BDC294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift */,
+				60EA0DF42946C1F000E96CFD /* CustomChangeSpeedCurveView.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -348,9 +354,11 @@
 				600CBA32292F523C00A17BD9 /* SineView.swift in Sources */,
 				600CB9FC292F13A300A17BD9 /* AppDelegate.swift in Sources */,
 				60249A1F2939AB190017926E /* MonotonicSineModel.swift in Sources */,
+				60EA0DF72946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift in Sources */,
 				600CB9FE292F13A300A17BD9 /* SceneDelegate.swift in Sources */,
 				601B5BD9293F22220021F9D9 /* DoubleYChangeSpeedCurveVC.swift in Sources */,
 				60249A1A2936F7FA0017926E /* ChangeSpeedCurveView.swift in Sources */,
+				60EA0DF52946C1F000E96CFD /* CustomChangeSpeedCurveView.swift in Sources */,
 				601B5BD3293AFCA10021F9D9 /* DoubleYMonotonicSineMode.swift in Sources */,
 				601B5BD7293EEDA60021F9D9 /* DoubleYMonotonicSinGraghModel.swift in Sources */,
 			);

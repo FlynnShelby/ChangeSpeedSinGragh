@@ -10,6 +10,7 @@ import UIKit
 let KScreenW = UIScreen.main.bounds.width
 let KScreenH = UIScreen.main.bounds.height
 let KStatusBarH = UIApplication.shared.statusBarFrame.height
+let KNavBarH = (KStatusBarH != 20.0 ? 88.0 : 64)
 let KSafeBottom = (KStatusBarH != 20.0 ? 34.0 : 0.0)
 
 class HomeVC: UIViewController {
@@ -143,6 +144,17 @@ extension HomeVC : UITableViewDelegate,UITableViewDataSource{
             sinVC.sineView.pointArr = [CGPoint(x: 0, y: 1),CGPoint(x: 10, y: 10),CGPoint(x: 20, y: 0.2),CGPoint(x: 30, y: 6),CGPoint(x: 35, y: 6)]
             
             vc = sinVC
+            break
+        case 15://自定义变速曲线
+            let sinVC = CustomChangeSpeedCurveVC()
+            sinVC.maxTime = 35.0
+            sinVC.pointArr = [CGPoint(x: 0, y: 0.9),CGPoint(x: 4, y: 0.9),CGPoint(x: 18, y: 7),CGPoint(x: 24, y: 0.3),CGPoint(x: 28, y: 1),CGPoint(x: 35, y: 1)]
+            
+            sinVC.view.frame = CGRect(x: 0, y: KScreenH-KSafeBottom-318, width: KScreenW, height: 318+KSafeBottom)
+            sinVC.titleLab.text = "蒙太奇"
+            vc.addChild(sinVC)
+            vc.view.addSubview(sinVC.view)
+            vc.view.backgroundColor = .white
             break
         default:
             vc = SineCurveVC()
