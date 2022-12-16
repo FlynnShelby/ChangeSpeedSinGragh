@@ -24,7 +24,7 @@ class CustomChangeSpeedSineCurveVC: UIViewController {
         
         customSineView.totalTime = totalTime
         customSineView.originPointArr = pointArr
-        customSineView.titleLab.text = "蒙太奇"
+        customSineView.curveName = "蒙太奇"
     }
     
 }

@@ -8,13 +8,30 @@
 import UIKit
 //变速曲线模型
 class CustomSineCurveModel: NSObject {
+    
+    //变速曲线名称
+    var curveName = ""
+    
+    //总时长 s
     var totalTime = 10.0
+    
+    //初始控制点
+    var originPointArr:[CGPoint] = [] 
+    
     //控制点
     var pointArr:[CGPoint] = []{
         didSet {
              self.sineModelArr = createModelArr(pointArr)
         }
     }
+    
+    //是否开启智能补帧
+    var isSmartFillFrame = false
+
+    
+    //时间最大百分值 %
+    let maxTimePercent = 100.0
+    
     //单调曲线模型组
     var sineModelArr:[MonotonicSineCurveModel] = []
     
@@ -42,6 +59,54 @@ class CustomSineCurveModel: NSObject {
         }
         
         return arr
+    }
+    
+    //锁定某时间对应的函数模型
+    func findSineModel(x:CGFloat)->[String:Any]{
+        for model in sineModelArr {
+            if model.vtP0.x <= x && x <= model.vtP1.x {
+                return ["success":true,"model":model]
+            }
+        }
+        return ["success":false,"model":NSNull()]
+    }
+    
+    //某时刻的速度
+    func getValueWithTime(_ t:CGFloat)->CGFloat{
+        
+        let res = findSineModel(x: t)
+        guard let success = res["success"] as? Bool,success != false,
+              let model = res["model"] as? MonotonicSineCurveModel else {
+            return 0.0
+        }
+        let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
+        
+        return v
+    }
+    
+    //变速后的总时间
+    func getFinallyTime() -> TimeInterval {
+        var t = 0.0
+        var timePercent = 0.0
+        
+        while t < maxTimePercent {
+            let interval = 1.0
+            
+            t += interval
+            t = min(t, maxTimePercent)
+            
+            let res = findSineModel(x: t)
+            guard let success = res["success"] as? Bool,success != false,
+                  let model = res["model"] as? MonotonicSineCurveModel else {
+                return 0.0
+            }
+            let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
+            
+            timePercent += interval/v
+        }
+        
+        let finalTime = totalTime * (timePercent / maxTimePercent)
+        return finalTime
     }
 }
 /*

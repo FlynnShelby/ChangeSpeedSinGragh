@@ -47,7 +47,7 @@ class DoubleYMonotonicSinGraghModel: NSObject {
         self.step_t = step_t
         self.o = o
         
-        //实际坐标转数学坐标
+        //实际坐标转视图坐标
         self.start = CGPoint(x: p0.x/step_t, y: Self.getPointYAtView(p0.y, o: o))
         self.end = CGPoint(x: p1.x/step_t, y: Self.getPointYAtView(p1.y, o: o))
         
@@ -66,7 +66,7 @@ class DoubleYMonotonicSinGraghModel: NSObject {
     }
    
     
-    //数学坐标系
+    //视图坐标系
     //起点(峰点/谷点)
     var start: CGPoint = CGPoint(x: 0, y: 100)
     //终点（谷点/峰点）

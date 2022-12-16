@@ -8,7 +8,16 @@
 import UIKit
 //MARK: 定制变速曲线
 class CustomSineCurveView: UIView {
+    //变速曲线名称
+    var curveName = "" {
+        didSet {
+            self.titleLab.text = curveName
+            curveModel.curveName = curveName
+        }
+    }
+    
     //峰值点/控制点(t,v) (t:时间百分值（0～100），v:t对应的速度值（0.1～10）)
+    //初始控制点数组
     var originPointArr: [CGPoint] = []{
         didSet {
             pointArr.removeAll()
@@ -16,9 +25,13 @@ class CustomSineCurveView: UIView {
             pointOperationRecord.append(pointArr)
             currentRecordIndex = 0
             isCountChange = true
+            curveModel.originPointArr = originPointArr
+//            if pointArr.count > 0 {
+//                currentPoint = pointArr.first
+//            }
         }
     }
-    
+    //当前控制点数组
     var pointArr: [CGPoint] = []{
         didSet {
             guard pointArr.count > 1 else{return}
@@ -34,6 +47,7 @@ class CustomSineCurveView: UIView {
     
     var gestureView = UIView()
     
+    //变速曲线模型
     var curveModel = CustomSineCurveModel()
     
     //x轴每个点（pt）所对应的时间t (t:时间百分值)
@@ -48,12 +62,14 @@ class CustomSineCurveView: UIView {
     }
     
     //总时长（秒）
-    var totalTime: CGFloat = 35.0
+    var totalTime: CGFloat = 35.0 {
+        didSet {
+            curveModel.totalTime = totalTime
+        }
+    }
     
     //最大时间百分值
     let maxTime = 100.0
-    
-    
     
     
     //操作记录
@@ -101,7 +117,39 @@ class CustomSineCurveView: UIView {
         didSet {
             currentTime = currentPoint.x
             checkCurrentPoint()
-            currentPointBlock?(currentPoint)
+//            currentPointBlock?(currentPoint)
+            
+            
+            var isCtrlP = false
+            for point in pointArr {
+                if abs(point.x - currentPoint.x) < 5*w_t {
+                    isCtrlP = true
+                }
+            }
+            addBtn.isHidden = isCtrlP
+            deleteBtn.isHidden = !isCtrlP
+            
+            if abs(pointArr.first!.x - currentPoint.x) < 5*w_t
+                || abs(pointArr.last!.x - currentPoint.x) < 5*w_t {
+                //首尾两个控制点不可删除
+                deleteBtn.isEnabled = false
+                deleteBtn.backgroundColor = UIColor(red: 82/255, green: 82/255, blue: 82/255, alpha: 1)
+            }else{
+                deleteBtn.isEnabled = true
+                deleteBtn.backgroundColor = .white
+            }
+            
+            finalTimeLab.text = String(format: "%.1fs", curveModel.getFinallyTime())
+            
+            //智能补帧按钮是否可用
+            if isAllPointYGreaterThan1() {
+                //所有控制点速度v>1时，禁用智能补帧
+                smartFillFrameBtn.isSelected = false
+                smartFillFrameBtn.isEnabled = false
+                curveModel.isSmartFillFrame = false
+            }else{
+                smartFillFrameBtn.isEnabled = true
+            }
         }
     }
     
@@ -185,35 +233,35 @@ class CustomSineCurveView: UIView {
         sineView.wR = CGPointMake(0.0, sineView.bounds.width)
         sineView.hR = CGPointMake(0.0, sineView.bounds.height)
         sineView.backgroundColor = .clear
-        currentPointBlock = {[weak self] p in
-            guard let this = self,let arr = self?.pointArr else {return}
-            var b = false
-            for point in arr {
-                if abs(point.x - p.x) < 5*(self?.w_t)! {
-                    b = true
-                }
-            }
-            self?.addBtn.isHidden = b
-            self?.deleteBtn.isHidden = !b
-            
-            if abs(arr.first!.x - p.x) < 5*(self?.w_t)!
-                || abs(arr.last!.x - p.x) < 5*(self?.w_t)! {
-                self?.deleteBtn.isEnabled = false
-                self?.deleteBtn.backgroundColor = UIColor(red: 82/255, green: 82/255, blue: 82/255, alpha: 1)
-            }else{
-                self?.deleteBtn.isEnabled = true
-                self?.deleteBtn.backgroundColor = .white
-            }
-            
-            self?.finalTimeLab.text = String(format: "%.1fs", self!.getFinallyTime())
-            
-            if this.isAllPointYGreaterThan1() {
-                this.smartFillFrameBtn.isSelected = false
-                this.smartFillFrameBtn.isEnabled = false
-            }else{
-                this.smartFillFrameBtn.isEnabled = true
-            }
-        }
+//        currentPointBlock = {[weak self] p in
+//            guard let this = self,let arr = self?.pointArr else {return}
+//            var b = false
+//            for point in arr {
+//                if abs(point.x - p.x) < 5*(self?.w_t)! {
+//                    b = true
+//                }
+//            }
+//            self?.addBtn.isHidden = b
+//            self?.deleteBtn.isHidden = !b
+//
+//            if abs(arr.first!.x - p.x) < 5*(self?.w_t)!
+//                || abs(arr.last!.x - p.x) < 5*(self?.w_t)! {
+//                self?.deleteBtn.isEnabled = false
+//                self?.deleteBtn.backgroundColor = UIColor(red: 82/255, green: 82/255, blue: 82/255, alpha: 1)
+//            }else{
+//                self?.deleteBtn.isEnabled = true
+//                self?.deleteBtn.backgroundColor = .white
+//            }
+//
+//            self?.finalTimeLab.text = String(format: "%.1fs", self!.getFinallyTime())
+//
+//            if this.isAllPointYGreaterThan1() {
+//                this.smartFillFrameBtn.isSelected = false
+//                this.smartFillFrameBtn.isEnabled = false
+//            }else{
+//                this.smartFillFrameBtn.isEnabled = true
+//            }
+//        }
         
         panGestureEndBlock = { [weak self]  in
             self?.refreshRevocationAndRecoverBtnEnableState()
@@ -284,7 +332,7 @@ class CustomSineCurveView: UIView {
         
         finalTimeLab.textColor = .white
         finalTimeLab.font = UIFont.systemFont(ofSize: 12)
-        finalTimeLab.text = String(format: "%.1fs", getFinallyTime())
+        finalTimeLab.text = String(format: "%.1fs", curveModel.getFinallyTime())
         finalTimeLab.frame = CGRect(x: 0, y: 0, width: 60, height: 18)
         finalTimeLab.center = CGPoint(x: arrowIcon.frame.maxX+4+30, y: deleteBtn.center.y)
         addSubview(finalTimeLab)
@@ -334,11 +382,10 @@ class CustomSineCurveView: UIView {
                 }
             }
         }
-        //首次进入页面时获取不到变速后的总时间，因此曲线绘制完成时调用一次回调
-        if pointOperationRecord.count == 1 {
-            currentPointBlock?(currentPoint)
-        }
+        
     }
+    
+    
     
     //MARK: 添加
         @objc func addBtnClicked(){
@@ -380,7 +427,7 @@ class CustomSineCurveView: UIView {
     //MARK: 智能补帧
         @objc func smartFillFrameBtnClicked(_ sender:UIButton){
             sender.isSelected = !sender.isSelected
-            
+            curveModel.isSmartFillFrame = sender.isSelected
             if sender.isSelected {
                 marginXForAnimate = 1.0
             }else{
@@ -390,8 +437,8 @@ class CustomSineCurveView: UIView {
         
         //是否所有控制点的速度都>1
         func isAllPointYGreaterThan1() -> Bool {
-            let arr = pointArr.filter {$0.y <= 1}
-            return arr.count == 0
+            let arr = pointArr.filter {$0.y > 1}
+            return arr.count == pointArr.count
         }
         
     //MARK: 撤消一步操作
@@ -554,7 +601,7 @@ class CustomSineCurveView: UIView {
             
             break
         case .ended:
-            print("finallyTime=\(getFinallyTime())")
+            print("finallyTime=\(curveModel.getFinallyTime())")
             playDate = Date()
             play = true
             
@@ -640,7 +687,7 @@ class CustomSineCurveView: UIView {
         let margin = marginXForAnimate > 0 ? marginXForAnimate : 2.0
         
         let w = currentTime/w_t + margin
-        let v = getValueWithTime(currentTime)
+        let v = curveModel.getValueWithTime(currentTime)
         currentPoint = CGPoint(x: w*w_t, y: v)
         var rec = timeLine.frame
         rec.origin.x = min(sineView.frame.minX+w, sineView.frame.maxX)
@@ -667,46 +714,46 @@ class CustomSineCurveView: UIView {
         
     }
     
-    //锁定某时间对应的函数模型
-    @objc func findSineModel(x:CGFloat)->MonotonicSineCurveModel{
-        for model in sineView.funcParamsArr {
-            if model.vtP0.x <= x && x <= model.vtP1.x {
-                return model
-            }
-        }
-        return MonotonicSineCurveModel(vtP0: CGPointMake(0.0, 1.0), vtP1: CGPointMake(100, 1.0))
-    }
-    
-    //某时刻的速度
-    func getValueWithTime(_ t:CGFloat)->CGFloat{
-        
-        let model = findSineModel(x: t)
-        let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
-        
-        return v
-    }
-    
-    //变速后的总时间
-    func getFinallyTime() -> TimeInterval {
-        var t = 0.0
-        var timePercent = 0.0
-        
-        while t < maxTime {
-            let interval = 1.0
-            
-            t += interval
-            t = min(t, maxTime)
-            
-            let model = findSineModel(x: t)
-            
-            let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
-            
-            timePercent += interval/v
-        }
-        
-        let finalTime = totalTime * (timePercent / maxTime)
-        return finalTime
-    }
+//    //锁定某时间对应的函数模型
+//    @objc func findSineModel(x:CGFloat)->MonotonicSineCurveModel{
+//        for model in sineView.funcParamsArr {
+//            if model.vtP0.x <= x && x <= model.vtP1.x {
+//                return model
+//            }
+//        }
+//        return MonotonicSineCurveModel(vtP0: CGPointMake(0.0, 1.0), vtP1: CGPointMake(100, 1.0))
+//    }
+//    
+//    //某时刻的速度
+//    func getValueWithTime(_ t:CGFloat)->CGFloat{
+//        
+//        let model = findSineModel(x: t)
+//        let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
+//        
+//        return v
+//    }
+//    
+//    //变速后的总时间
+//    func getFinallyTime() -> TimeInterval {
+//        var t = 0.0
+//        var timePercent = 0.0
+//        
+//        while t < maxTime {
+//            let interval = 1.0
+//            
+//            t += interval
+//            t = min(t, maxTime)
+//            
+//            let model = findSineModel(x: t)
+//            
+//            let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
+//            
+//            timePercent += interval/v
+//        }
+//        
+//        let finalTime = totalTime * (timePercent / maxTime)
+//        return finalTime
+//    }
     
 }
 
@@ -791,25 +838,6 @@ class CustomSineCurveCanvas:UIView {
             }
             
              
-//            if isCountChange {
-//
-//                //调整控制点的位置
-//                if i == 0 {
-//                    ctrlPVArr.first?.center = funcParams.whP0
-//                    ctrlPVArr[i+1].center = funcParams.whP1
-//                }else{
-//                    ctrlPVArr[i+1].center = funcParams.whP1
-//                }
-//
-//                if i == funcParamsArr.count - 1 {
-//                    isCountChange = false
-//                }
-//
-//                //首次进入页面时获取不到变速后的总时间，因此曲线绘制完成时调用一次回调
-//                if pointOperationRecord.count == 1 {
-//                    currentPointBlock?(currentPoint)
-//                }
-//            }
         }
         
         path.stroke()
