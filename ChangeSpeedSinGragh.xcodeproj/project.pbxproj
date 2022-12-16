@@ -37,6 +37,9 @@
 		60BD1E50293458EB00DA0EF0 /* MultipleSineCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60BD1E4F293458EB00DA0EF0 /* MultipleSineCurveVC.swift */; };
 		60EA0DF52946C1F000E96CFD /* CustomChangeSpeedCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EA0DF42946C1F000E96CFD /* CustomChangeSpeedCurveView.swift */; };
 		60EA0DF72946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EA0DF62946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift */; };
+		60EA0DFD2949FE6E00E96CFD /* CustomSineCurveModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EA0DFC2949FE6E00E96CFD /* CustomSineCurveModel.swift */; };
+		60EA0DFF294B0D7C00E96CFD /* CustomSineCurveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EA0DFE294B0D7C00E96CFD /* CustomSineCurveView.swift */; };
+		60EA0E01294B156500E96CFD /* CustomChangeSpeedSineCurveVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60EA0E00294B156500E96CFD /* CustomChangeSpeedSineCurveVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +94,9 @@
 		60BD1E4F293458EB00DA0EF0 /* MultipleSineCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipleSineCurveVC.swift; sourceTree = "<group>"; };
 		60EA0DF42946C1F000E96CFD /* CustomChangeSpeedCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChangeSpeedCurveView.swift; sourceTree = "<group>"; };
 		60EA0DF62946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChangeSpeedCurveVC.swift; sourceTree = "<group>"; };
+		60EA0DFC2949FE6E00E96CFD /* CustomSineCurveModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSineCurveModel.swift; sourceTree = "<group>"; };
+		60EA0DFE294B0D7C00E96CFD /* CustomSineCurveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSineCurveView.swift; sourceTree = "<group>"; };
+		60EA0E00294B156500E96CFD /* CustomChangeSpeedSineCurveVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChangeSpeedSineCurveVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +159,7 @@
 				601B5BDA293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift */,
 				601B5BDE294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift */,
 				60EA0DF62946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift */,
+				60EA0E00294B156500E96CFD /* CustomChangeSpeedSineCurveVC.swift */,
 				60249A1B2936F8480017926E /* model */,
 				600CBA37292F955800A17BD9 /* view */,
 				600CBA01292F13A300A17BD9 /* Main.storyboard */,
@@ -191,6 +198,7 @@
 				601B5BD4293EEC2E0021F9D9 /* DoubleYChangeSpeedSinGraghView.swift */,
 				601B5BDC294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift */,
 				60EA0DF42946C1F000E96CFD /* CustomChangeSpeedCurveView.swift */,
+				60EA0DFE294B0D7C00E96CFD /* CustomSineCurveView.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -202,6 +210,7 @@
 				60249A1E2939AB190017926E /* MonotonicSineModel.swift */,
 				601B5BD2293AFCA10021F9D9 /* DoubleYMonotonicSineMode.swift */,
 				601B5BD6293EEDA60021F9D9 /* DoubleYMonotonicSinGraghModel.swift */,
+				60EA0DFC2949FE6E00E96CFD /* CustomSineCurveModel.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -337,6 +346,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60EA0DFD2949FE6E00E96CFD /* CustomSineCurveModel.swift in Sources */,
 				601B5BDB293F28470021F9D9 /* DoubleYChangeSpeedSinGraghVC.swift in Sources */,
 				60249A212939DB940017926E /* ChangeSpeedCurveVC.swift in Sources */,
 				601B5BDF294035D40021F9D9 /* DoubleYChangeSpeedSineCurveVC.swift in Sources */,
@@ -344,6 +354,7 @@
 				601B5BD5293EEC2F0021F9D9 /* DoubleYChangeSpeedSinGraghView.swift in Sources */,
 				600CBA36292F951700A17BD9 /* SineCurveVC.swift in Sources */,
 				600CBA30292F176B00A17BD9 /* HomeVC.swift in Sources */,
+				60EA0DFF294B0D7C00E96CFD /* CustomSineCurveView.swift in Sources */,
 				600CBA34292F6EBE00A17BD9 /* SineCurveView.swift in Sources */,
 				60249A1D2936F8660017926E /* SineParamsModel.swift in Sources */,
 				601B5BDD294031A40021F9D9 /* DoubleYChangeSpeedSineCurveView.swift in Sources */,
@@ -354,6 +365,7 @@
 				600CBA32292F523C00A17BD9 /* SineView.swift in Sources */,
 				600CB9FC292F13A300A17BD9 /* AppDelegate.swift in Sources */,
 				60249A1F2939AB190017926E /* MonotonicSineModel.swift in Sources */,
+				60EA0E01294B156500E96CFD /* CustomChangeSpeedSineCurveVC.swift in Sources */,
 				60EA0DF72946CFAE00E96CFD /* CustomChangeSpeedCurveVC.swift in Sources */,
 				600CB9FE292F13A300A17BD9 /* SceneDelegate.swift in Sources */,
 				601B5BD9293F22220021F9D9 /* DoubleYChangeSpeedCurveVC.swift in Sources */,
@@ -535,6 +547,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = N5APH9F822;
@@ -553,6 +566,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xlf.demos.ChangeSpeedSinGragh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -564,6 +578,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = N5APH9F822;
@@ -582,6 +597,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xlf.demos.ChangeSpeedSinGragh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
