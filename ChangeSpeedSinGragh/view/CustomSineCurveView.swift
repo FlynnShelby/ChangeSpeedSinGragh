@@ -186,7 +186,7 @@ class CustomSineCurveView: UIView {
     
     //MARK: 回调传值
     //（时码线）位置变化回调
-    var currentPointBlock:((_ p:CGPoint,_ curveModel:CustomSineCurveModel,timeLineState:TimeLineState) ->Void)?
+    var currentPointBlock:((_ p:CGPoint,_ curveModel:CustomSineCurveModel,_ timeLineState:TimeLineState) ->Void)?
     
     //平移操作回调
     var panGestureEndBlock:((_ p:CGPoint,_ curveModel:CustomSineCurveModel)->Void)?
@@ -404,6 +404,7 @@ class CustomSineCurveView: UIView {
         for index in 0...pointArr.count-1 {
             let point = pointArr[index]
             if abs(point.x - p.x) < 5*(self.w_t) {
+                play = false
                 pointArr.remove(at: index)
                 break
             }
