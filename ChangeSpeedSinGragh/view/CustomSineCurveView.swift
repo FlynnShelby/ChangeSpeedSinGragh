@@ -7,10 +7,20 @@
 
 import UIKit
 
+var UScreenWidth = UIScreen.main.bounds.width
+var UScreenHeight = UIScreen.main.bounds.height
+
 enum TimeLineState: Int {
-    case isTap = 0
-    case isPan = 1
-    case isPlay = 2
+    case isTap = 0      //(曲线无变动)时码线移动到高亮控制点
+    case isPanBegan = 1 //控制点平移开始，时码线移动到高亮控制点
+    case isPaning = 2   //控制点平移中，时码线跟随移动
+    case isPanEnd = 3   //控制点平移结束
+    case isPlay = 4     //(曲线无变动，时码线移动中)播放中
+    case isPlayEnd = 5  //(曲线无变动)当前视频片段播放结束
+    case isAdd = 6      //添加操作，时码线添加时的位置
+    case isDelete = 7   // 删除操作，时码线重置到起始位置
+    case isReset = 8    //重置操作，时码线重置到起始位置
+    case isPanOnlyLine = 9  //仅时码线平移
 }
 
 //MARK: 定制变速曲线
@@ -72,6 +82,7 @@ class CustomSineCurveView: UIView {
     var totalTime: CGFloat = 35.0 {
         didSet {
             curveModel.totalTime = totalTime
+            totalTimeLab.text = String(format: "时长%.1fs", totalTime)
         }
     }
     
@@ -105,11 +116,11 @@ class CustomSineCurveView: UIView {
     var play: Bool = false {
         didSet {
             if play {
+                playDate = Date()
                 timeLineState = .isPlay
                 beginAnimation()
             }else{
                 workItem.cancel()
-                timeLineState = .isTap
             }
         }
     }
@@ -125,13 +136,15 @@ class CustomSineCurveView: UIView {
     //(时码线)当前位置（t，v）
     var currentPoint:CGPoint = CGPoint(x: 0, y: 1) {
         didSet {
+            self.currentPoint = CGPoint(x: currentPoint.x.double.roundTo(places: 1), y: currentPoint.y.double.roundTo(places: 1))
+            
             currentTime = currentPoint.x
             checkCurrentPoint()
             //更新按钮状态（添加、删除、智能补帧等）
             updateBtnState()
             
-            //变速后总时间s
-            finalTimeLab.text = String(format: "%.1fs", curveModel.getFinallyTime())
+//            //变速后总时间s
+//            finalTimeLab.text = String(format: "%.1fs", curveModel.getFinallyTime())
             
             currentPointBlock?(currentPoint,curveModel,timeLineState)
         }
@@ -155,8 +168,8 @@ class CustomSineCurveView: UIView {
     var titleLab:UILabel = UILabel()
     var confirmBtn:UIButton = UIButton(type: .custom)
     
-    var addBtn:UIButton = UIButton(type: .system)
-    var deleteBtn:UIButton = UIButton(type: .system)
+    var addBtn:UIButton = UIButton(type: .custom)
+    var deleteBtn:UIButton = UIButton(type: .custom)
     
     var totalTimeLab:UILabel = UILabel()
     var arrowIcon:UIImageView = UIImageView()
@@ -168,19 +181,23 @@ class CustomSineCurveView: UIView {
     //撤消
     lazy var revocationBtn:UIButton = {
         let btn = UIButton(type: .custom)
-        btn.setImage(UIImage(named: "revocation"), for: .normal)
+        btn.setImage(UIImage(named:"revocation"), for: .normal)
         btn.frame = CGRect(x: 20, y: frame.minY-34, width: 30, height: 30)
         self.superview?.addSubview(btn)
         btn.addTarget(self, action: #selector(revocationBtnClicked), for: .touchUpInside)
+        
+        btn.isHidden = true //该功能不需要
         return btn
     }()
     //恢复
     lazy var recoverBtn:UIButton = {
         let btn = UIButton(type: .custom)
-        btn.setImage(UIImage(named: "recover"), for: .normal)
+        btn.setImage(UIImage(named:"recover"), for: .normal)
         btn.frame = CGRect(x: 64, y: frame.minY-34, width: 30, height: 30)
         self.superview?.addSubview(btn)
         btn.addTarget(self, action: #selector(recoverBtnClicked), for: .touchUpInside)
+        
+        btn.isHidden = true //该功能不需要
         return btn
     }()
     
@@ -188,11 +205,9 @@ class CustomSineCurveView: UIView {
     //（时码线）位置变化回调
     var currentPointBlock:((_ p:CGPoint,_ curveModel:CustomSineCurveModel,_ timeLineState:TimeLineState) ->Void)?
     
-    //平移操作回调
-    var panGestureEndBlock:((_ p:CGPoint,_ curveModel:CustomSineCurveModel)->Void)?
+    //切换智能补帧回调
+    var changeSmartFillFrameBlock:((_ curveModel:CustomSineCurveModel) ->Void)?
     
-    //单击回调
-    var tapGestureEndBlock:((_ p:CGPoint,_ curveModel:CustomSineCurveModel)->Void)?
     
     //确定回调
     var confirmBlock:((_ curveModel:CustomSineCurveModel)->Void)?
@@ -211,13 +226,15 @@ class CustomSineCurveView: UIView {
     func setupUI() {
         
         //控制点手势图
-        gestureView.frame = CGRect(x: 0, y: 59, width: KScreenW, height: 200)
+        gestureView.frame = CGRect(x: 0, y: 49, width: UScreenWidth, height: 200)
         addSubview(gestureView)
+        let onlyLinePan = UIPanGestureRecognizer(target: self, action: #selector(onlyTimeLinePanChange(_ :)))
+        gestureView.addGestureRecognizer(onlyLinePan)
         
         timeLine.frame = CGRect(x: 24, y: 10, width: 1.5, height: 180)
         
         //变速曲线图
-        sineView.frame = CGRect(x: 24, y: 10, width: KScreenW-48, height: 180)
+        sineView.frame = CGRect(x: 24, y: 10, width: UScreenWidth-48, height: 180)
         sineView.whO = CGPointMake(0.0, sineView.bounds.height/2)
         sineView.wR = CGPointMake(0.0, sineView.bounds.width)
         sineView.hR = CGPointMake(0.0, sineView.bounds.height)
@@ -230,8 +247,7 @@ class CustomSineCurveView: UIView {
         resetBtn.setTitle("重置", for: .normal)
         resetBtn.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         resetBtn.setTitleColor(.white, for: .normal)
-        resetBtn.frame = CGRect(x: 0, y: 0, width: 60, height: 44)
-        resetBtn.center = CGPoint(x: 16+30, y: gestureView.frame.minY+10-25-22)
+        resetBtn.frame = CGRect(x: 16, y: 0, width: 60, height: 44)
         addSubview(resetBtn)
         resetBtn.addTarget(self, action: #selector(resetBtnClicked), for: .touchUpInside)
         
@@ -241,38 +257,36 @@ class CustomSineCurveView: UIView {
         titleLab.text = "变速曲线"
         titleLab.textAlignment = .center
         titleLab.frame = CGRect(x: 0, y: 0, width: 200, height: 20)
-        titleLab.center = CGPoint(x: center.x, y: gestureView.frame.minY+10-25-22)
+        titleLab.center = CGPoint(x: center.x, y: resetBtn.center.y)
         addSubview(titleLab)
         
         //确认
-        confirmBtn.setImage(UIImage(named: "curveConfirm"), for: .normal)
-        confirmBtn.frame = CGRect(x: 0, y: 0, width: 44, height: 44)
-        confirmBtn.center = CGPoint(x: KScreenW-(13+22), y: gestureView.frame.minY+10-25-22)
+        confirmBtn.setImage(UIImage(named:"curveConfirm"), for: .normal)
+        confirmBtn.frame = CGRect(x: UScreenWidth-(13+22), y: 0, width: 44, height: 44)
         addSubview(confirmBtn)
         confirmBtn.addTarget(self, action: #selector(confirmBtnClicked), for: .touchUpInside)
         
         //添加控制点按钮
-        addBtn.frame = CGRect(x: (KScreenW-68)/2, y: gestureView.frame.maxY-10+16, width: 68, height: 26)
+        addBtn.frame = CGRect(x: (UScreenWidth-68)/2, y: gestureView.frame.maxY+6, width: 68, height: 26)
         addBtn.backgroundColor = .white
         addBtn.layer.cornerRadius = 2
         addBtn.setTitle("+ 添加点", for: .normal)
         addBtn.setTitleColor(.black, for: .normal)
         addBtn.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         addSubview(addBtn)
-        addBtn.addTarget(self, action: #selector(addBtnClicked), for: .touchUpInside)
+        addBtn.addTarget(self, action: #selector(addBtnClicked(_ :)), for: .touchUpInside)
         addBtn.isHidden = true
         
         //删除控制点按钮
-        deleteBtn.frame = CGRect(x: (KScreenW-68)/2, y: gestureView.frame.maxY-10+16, width: 68, height: 26)
+        deleteBtn.frame = CGRect(x: (UScreenWidth-68)/2, y: gestureView.frame.maxY+6, width: 68, height: 26)
         deleteBtn.backgroundColor = UIColor(red: 82/255, green: 82/255, blue: 82/255, alpha: 1)
         deleteBtn.layer.cornerRadius = 2
         deleteBtn.setTitle("- 删除点", for: .normal)
         deleteBtn.setTitleColor(.black, for: .normal)
         deleteBtn.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         addSubview(deleteBtn)
-        deleteBtn.addTarget(self, action: #selector(deleteBtnClicked), for: .touchUpInside)
+        deleteBtn.addTarget(self, action: #selector(deleteBtnClicked(_ :)), for: .touchUpInside)
         deleteBtn.isHidden = false
-        deleteBtn.isEnabled = false
         
         //时长
         totalTimeLab.textColor = UIColor(red: 139/255, green: 139/255, blue: 139/255, alpha: 1)
@@ -282,7 +296,7 @@ class CustomSineCurveView: UIView {
         totalTimeLab.center = CGPoint(x: 54, y: deleteBtn.center.y)
         addSubview(totalTimeLab)
         
-        arrowIcon.image = UIImage(named: "timeArrow")
+        arrowIcon.image = UIImage(named:"timeArrow")
         arrowIcon.frame = CGRect(x: 0, y: 0, width: 5, height: 5)
         arrowIcon.center = CGPoint(x: totalTimeLab.frame.maxX+4+2.5, y: deleteBtn.center.y)
         addSubview(arrowIcon)
@@ -295,16 +309,16 @@ class CustomSineCurveView: UIView {
         addSubview(finalTimeLab)
         
         //智能补帧
-        smartFillFrameBtn.setImage(UIImage(named: "curveSmart_normal"), for: .normal)
-        smartFillFrameBtn.setImage(UIImage(named: "curveSmart_selected"), for: .selected)
+        smartFillFrameBtn.setImage(UIImage(named:"curveSmart_normal"), for: .normal)
+        smartFillFrameBtn.setImage(UIImage(named:"curveSmart_selected"), for: .selected)
         smartFillFrameBtn.setTitle(" 智能补帧", for: .normal)
         smartFillFrameBtn.setTitleColor(.white, for: .normal)
         smartFillFrameBtn.titleLabel?.font = UIFont.systemFont(ofSize: 12)
         smartFillFrameBtn.frame = CGRect(x: 0, y: 0, width: 76, height: 18)
-        smartFillFrameBtn.center = CGPoint(x: KScreenW-24-38, y: deleteBtn.center.y)
+        smartFillFrameBtn.center = CGPoint(x: UScreenWidth-24-38, y: deleteBtn.center.y)
         addSubview(smartFillFrameBtn)
         smartFillFrameBtn.addTarget(self, action: #selector(smartFillFrameBtnClicked), for: .touchUpInside)
-        
+    
         
         //创建sine函数模型所需
         curveModel.whO = sineView.whO
@@ -319,30 +333,41 @@ class CustomSineCurveView: UIView {
         for point in pointArr {
             if abs(point.x - currentPoint.x) < 5*w_t {
                 isCtrlP = true
+                break
             }
         }
         addBtn.isHidden = isCtrlP
         deleteBtn.isHidden = !isCtrlP
         
-        if abs(pointArr.first!.x - currentPoint.x) < 5*w_t
-            || abs(pointArr.last!.x - currentPoint.x) < 5*w_t {
-            //首尾两个控制点不可删除
-            deleteBtn.isEnabled = false
-            deleteBtn.backgroundColor = UIColor(red: 82/255, green: 82/255, blue: 82/255, alpha: 1)
+        if isCtrlP {
+            sendSubviewToBack(addBtn)
+            if abs(pointArr.first!.x - currentPoint.x) < 5*w_t
+                || abs(pointArr.last!.x - currentPoint.x) < 5*w_t {
+                //首尾两个控制点不可删除
+                deleteBtn.isEnabled = false
+                deleteBtn.backgroundColor = UIColor(red: 82/255, green: 82/255, blue: 82/255, alpha: 1)
+            }else{
+                deleteBtn.isEnabled = true
+                deleteBtn.backgroundColor = .white
+            }
         }else{
-            deleteBtn.isEnabled = true
-            deleteBtn.backgroundColor = .white
+            bringSubviewToFront(addBtn)
+            deleteBtn.isEnabled = false
         }
-        
         
         //智能补帧按钮是否可用
         if isAllPointYGreaterThan1() {
             //所有控制点速度v>1时，禁用智能补帧
             smartFillFrameBtn.isSelected = false
             smartFillFrameBtn.isEnabled = false
-            curveModel.isSmartFillFrame = false
+            
+            if curveModel.isSmartFillFrame {
+                curveModel.isSmartFillFrame = false
+                self.changeSmartFillFrameBlock?(curveModel)
+            }
         }else{
             smartFillFrameBtn.isEnabled = true
+            smartFillFrameBtn.isSelected = curveModel.isSmartFillFrame
         }
     }
     
@@ -357,7 +382,7 @@ class CustomSineCurveView: UIView {
         print("draw111111")
         if isCountChange {
             
-            for i in 0...sineView.funcParamsArr.count-1 {
+            for i in 0..<sineView.funcParamsArr.count {
                 let funcParams = sineView.funcParamsArr[i]
                 //调整控制点的位置
                 if i == 0 {
@@ -378,33 +403,40 @@ class CustomSineCurveView: UIView {
     
     
     //MARK: 添加
-    @objc func addBtnClicked(){
-        print("newP=\(String(describing:currentPoint))")
+    @objc func addBtnClicked(_ sender:UIButton){
+        print("addPoint=\(String(describing:currentPoint))")
         play = false
+        timeLineState = .isAdd
         
         let p = currentPoint
         guard pointArr.count > 1 else {return}
-        for i in 1...pointArr.count-1 {
+        for i in 1..<pointArr.count {
             let a = pointArr[i-1]
             let b = pointArr[i]
             if a.x < p.x && p.x < b.x {
                 pointArr.insert(p, at: i)
-                currentPoint = p
+                setTimeLineTo(point: p)
+                break
             }
         }
         
         //记录操作
         pointOperationRecord.append(pointArr)
         currentRecordIndex += 1
+        
     }
     //MARK: 删除
-    @objc func deleteBtnClicked(){
-        print("newP=\(String(describing: currentPoint))")
+    @objc func deleteBtnClicked(_ sender:UIButton){
+        print("deletePoint=\(String(describing: currentPoint))")
+        
+        play = false
+        timeLineState = .isDelete
+        
         let p = currentPoint
-        for index in 0...pointArr.count-1 {
+        for index in 0..<pointArr.count {
             let point = pointArr[index]
             if abs(point.x - p.x) < 5*(self.w_t) {
-                play = false
+                
                 pointArr.remove(at: index)
                 break
             }
@@ -413,10 +445,16 @@ class CustomSineCurveView: UIView {
         //记录操作
         pointOperationRecord.append(pointArr)
         currentRecordIndex += 1
+        
+        setTimeLineTo(point: currentPoint)
     }
     
     //MARK: 智能补帧
     @objc func smartFillFrameBtnClicked(_ sender:UIButton){
+//        if let key = UIApplication.shared.keyWindow{
+//            key.showHUD(title: "功能暂未开发")
+//            return
+//        }
         sender.isSelected = !sender.isSelected
         curveModel.isSmartFillFrame = sender.isSelected
         if sender.isSelected {
@@ -424,6 +462,8 @@ class CustomSineCurveView: UIView {
         }else{
             marginXForAnimate = 2.0
         }
+        
+        changeSmartFillFrameBlock?(curveModel)
     }
     
     //是否所有控制点的速度都>1
@@ -464,6 +504,7 @@ class CustomSineCurveView: UIView {
     //MARK: 重置
     @objc func resetBtnClicked(){
         play = false
+        
         isSpecialOperation = true
         pointArr = originPointArr
         //清空记录
@@ -473,12 +514,20 @@ class CustomSineCurveView: UIView {
         currentRecordIndex = 0
         
         refreshRevocationAndRecoverBtnEnableState()
+        
+        timeLineState = .isReset
+        guard let  p = pointArr.first else { return }
+        setTimeLineTo(point: p)
     }
     //MARK: 确定
     @objc func confirmBtnClicked(){
         print("\(pointArr)")
-        
+        play = false
         confirmBlock?(curveModel)
+        
+        self.removeFromSuperview()
+        revocationBtn.removeFromSuperview()
+        recoverBtn.removeFromSuperview()
     }
     
     
@@ -502,7 +551,7 @@ class CustomSineCurveView: UIView {
             setTimeLineTo(point: pointArr.first!)
         }
         
-        for index in 0...pointArr.count-1 {
+        for index in 0..<pointArr.count {
             
             let cpv = UIButton(frame: CGRect(x: 0, y: 0, width: 16, height: 16))
             cpv.layer.cornerRadius = 8
@@ -520,16 +569,89 @@ class CustomSineCurveView: UIView {
         
     }
     
+    var centerOffset:CGPoint = CGPoint(x: 0, y: 0)
     //控制点平移
     @objc func panGestureChange(_ pan:UIPanGestureRecognizer){
         
         play = false
-        timeLineState = .isPan
+        
         let index = pan.view!.tag - 1000
         
         var p = CGPoint(x: 0, y: 0)
         switch pan.state {
         case .began:
+            timeLineState = .isPanBegan
+            setTimeLineTo(point: pointArr[index])
+            
+            speedLab.text = String(format: "速度：%.1fx", currentPoint.y)
+            speedLab.isHidden = false
+            
+            p = pan.location(in: gestureView)
+            let cpvCenter = ctrlPVArr[index].center
+            centerOffset = CGPoint(x: cpvCenter.x - p.x, y: cpvCenter.y - p.y)
+            print("sineCurve-- centerOffset = \(centerOffset.x),\(centerOffset.y)")
+            break
+        case .changed:
+            timeLineState = .isPaning
+            p = pan.location(in: gestureView)
+            print("sineCurve-- p=\(p)")
+            print("sineCurve-- centerOffset = \(centerOffset.x),\(centerOffset.y)")
+            var cpvCenter = CGPoint(x: p.x+centerOffset.x, y: p.y+centerOffset.y)
+            
+            print("sineCurve-- center--inframe=\(sineView.frame)")
+            
+            if cpvCenter.x < sineView.frame.minX
+                || cpvCenter.x > sineView.frame.maxX
+                || cpvCenter.y < sineView.frame.minY
+                || cpvCenter.y > sineView.frame.maxY
+            {
+//                break
+                cpvCenter.x = max(sineView.frame.minX, cpvCenter.x)
+                cpvCenter.x = min(cpvCenter.x,sineView.frame.maxX)
+                cpvCenter.y = max(sineView.frame.minY, cpvCenter.y)
+                cpvCenter.y = min(cpvCenter.y,sineView.frame.maxY)
+            }
+            
+            print("sineCurve-- cpvCenter===\(cpvCenter)")
+            
+            var center = pan.view!.center
+            let h = cpvCenter.y - sineView.frame.minY
+            var t = 0.0
+            if index == 0 {
+                center.y = cpvCenter.y
+                pan.view?.center = center
+                
+                t = sineView.tR.x   //t=0.0
+                
+            }else if index == pointArr.count - 1 {
+                
+                center.y = cpvCenter.y
+                pan.view?.center = center
+                
+                t = sineView.tR.y //t=100.0
+               
+            }else{
+                let pLast = sineView.funcParamsArr[index-1].whP0
+                let pNext = sineView.funcParamsArr[index].whP1
+                
+                
+                let w = cpvCenter.x - sineView.frame.minX
+                if w > pLast.x+8 && w < pNext.x-8 {
+                    pan.view?.center = cpvCenter
+                    
+                    t = MonotonicSineCurveModel.getTWithW(w,wRangeMax:sineView.wR.y)
+                    
+                }else{
+                    //两点(中心)之间x轴方向间距小于8，则跳过
+                    //避免控制点越位和过于重叠
+                    break
+                }
+                
+            }
+            
+            let v = MonotonicSineCurveModel.getVWithH(h, whO: sineView.whO, H: sineView.hR.y, vtO: sineView.vtO, vR: sineView.vR)
+            let point = CGPoint(x: t.roundTo(places: 2), y: v.double.roundTo(places: 2))
+            pointArr[index] = point
             
             setTimeLineTo(point: pointArr[index])
             
@@ -537,68 +659,9 @@ class CustomSineCurveView: UIView {
             speedLab.isHidden = false
             
             break
-        case .changed:
-            p = pan.location(in: gestureView)
-            
-            if p.x < sineView.frame.minX
-                || p.x > sineView.frame.maxX
-                || p.y < sineView.frame.minY
-                || p.y > sineView.frame.maxY
-            {
-                break
-            }
-            
-            print("p=\(p)")
-            if index == 0 {
-                var center = pan.view!.center
-                center.y = p.y
-                pan.view?.center = center
-                
-                let h = center.y - sineView.frame.minY
-                let v = MonotonicSineCurveModel.getVWithH(h, whO: sineView.whO, H: sineView.hR.y, vtO: sineView.vtO, vR: sineView.vR)
-                let point = CGPoint(x: sineView.tR.x, y: v)
-                pointArr[index] = point
-                
-                setTimeLineTo(point: pointArr[index])
-                setNeedsDisplay()
-            }else if index == pointArr.count - 1 {
-                var center = pan.view!.center
-                center.y = p.y
-                pan.view?.center = center
-                let h = center.y - sineView.frame.minY
-                let v = MonotonicSineCurveModel.getVWithH(h, whO: sineView.whO, H: sineView.bounds.height, vtO: sineView.vtO, vR: sineView.vR)
-                let point = CGPoint(x: sineView.tR.y, y: v)
-                pointArr[index] = point
-                
-                setTimeLineTo(point: pointArr[index])
-                setNeedsDisplay()
-            }else{
-                let pLast = sineView.funcParamsArr[index-1].whP0
-                let pNext = sineView.funcParamsArr[index].whP1
-                
-                let w = p.x - sineView.frame.minX
-                let h = p.y - sineView.frame.minY
-                if w > pLast.x+8 && w < pNext.x-8 {
-                    pan.view?.center = p
-                    
-                    let t = MonotonicSineCurveModel.getTWithW(w,wRangeMax:sineView.wR.y)
-                    let v = MonotonicSineCurveModel.getVWithH(h, whO: sineView.whO, H: sineView.bounds.height, vtO: sineView.vtO, vR: sineView.vR)
-                    let point = CGPoint(x: t, y: v)
-                    pointArr[index] = point
-                    
-                    setTimeLineTo(point: pointArr[index])
-                    setNeedsDisplay()
-                }
-            }
-            
-            speedLab.text = String(format: "速度：%.1fx", currentPoint.y)
-            speedLab.isHidden = false
-            
-            break
         case .ended:
-            print("finallyTime=\(curveModel.getFinallyTime())")
-            playDate = Date()
-            play = true
+            print("sineCurve-- finallyTime=\(curveModel.getFinallyTime())")
+             
             
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now()+2){
                 [weak self] in
@@ -610,7 +673,10 @@ class CustomSineCurveView: UIView {
             currentRecordIndex += 1
             
             refreshRevocationAndRecoverBtnEnableState()
-            panGestureEndBlock?(currentPoint,curveModel)
+            
+            timeLineState = .isPanEnd
+            setTimeLineTo(point: pointArr.first!)
+            play = true
             break
         default :
             break
@@ -633,8 +699,56 @@ class CustomSineCurveView: UIView {
             [weak self] in
             self?.speedLab.isHidden = true
         }
+         
+    }
+    
+    //仅时码线平移
+    @objc func onlyTimeLinePanChange(_ pan:UIPanGestureRecognizer){
+        play = false
         
-        tapGestureEndBlock?(currentPoint,curveModel)
+        var p = CGPoint(x: 0, y: 0)
+        
+        switch pan.state {
+        case .began,
+            .changed,
+            .ended:
+            
+            p = pan.location(in: gestureView)
+            
+            if p.x < sineView.frame.minX
+                || p.x > sineView.frame.maxX
+                || p.y < sineView.frame.minY
+                || p.y > sineView.frame.maxY
+            {
+                p.x = max(sineView.frame.minX, p.x)
+                p.x = min(p.x,sineView.frame.maxX)
+                p.y = max(sineView.frame.minY, p.y)
+                p.y = min(p.y,sineView.frame.maxY)
+            }
+            
+            let w = p.x - sineView.frame.minX
+            let t = MonotonicSineCurveModel.getTWithW(w,wRangeMax:sineView.wR.y)
+            
+            let res = curveModel.findSineModel(x: t)
+            guard let success = res["success"] as? Bool,
+                  success,
+                 let sinModel = res["model"] as? MonotonicSineCurveModel
+            else { return }
+            
+            timeLineState = .isPanOnlyLine
+           
+            let v = sinModel.solveSineFuncGetVWithT(t-sinModel.vtP0.x)
+            
+            setTimeLineTo(point: CGPointMake(t, v))
+            
+            speedLab.text = String(format: "速度：%.1fx", currentPoint.y)
+            speedLab.isHidden = false
+            break
+        
+        default :
+            break
+        }
+        
     }
     
     //设置时码线到某个点（t，v）
@@ -650,9 +764,9 @@ class CustomSineCurveView: UIView {
     //检测当前位置是否是某个控制点
     @objc func checkCurrentPoint(){
         
-        for index in 0...pointArr.count-1 {
+        for index in 0..<pointArr.count {
             let p = pointArr[index]
-            if abs(p.x - currentPoint.x) < 8*w_t {//误差区间8个点pt
+            if abs(p.x - currentPoint.x) < 5*w_t {//误差区间5个点pt
                 if index < ctrlPVArr.count {
                     ctrlPVArr[index].backgroundColor = .white
                 }
@@ -673,7 +787,7 @@ class CustomSineCurveView: UIView {
         
         print("1  t=\(currentTime) date=\(dateFormate.string(from: Date()))")
         if !play {
-            timeLineState = .isTap
+            
             //预防动画过程中点击了控制点，导致时码线停留在动画结束位置
             setTimeLineTo(point: currentPoint)
             return
@@ -681,12 +795,14 @@ class CustomSineCurveView: UIView {
         if currentTime >= maxTime{
             play = false
             print("endPlay time = \(Date().timeIntervalSince(playDate))")
-            timeLineState = .isTap
-            setTimeLineTo(point: currentPoint)
+            timeLineState = .isPlayEnd
+            setTimeLineTo(point: pointArr.first!)
             return
         }
         
         //间隔距离pt
+//        //间隔 1/sineView.tR.y 即1%时长对应的距离
+//        marginXForAnimate = sineView.wR.y/sineView.tR.y
         let margin = marginXForAnimate > 0 ? marginXForAnimate : 2.0
         
         let w = currentTime/w_t + margin
@@ -694,7 +810,12 @@ class CustomSineCurveView: UIView {
         currentPoint = CGPoint(x: w*w_t, y: v)
         var rec = timeLine.frame
         rec.origin.x = min(sineView.frame.minX+w, sineView.frame.maxX)
-        let duration = (w_t/sineView.tR.y*totalTime)/v
+        
+        //曲线速度微调，暂时采纳
+        let v1 = CustomSineCurveModel.calculateNewSpeedValue(Float(v))
+
+        let duration = (margin*w_t/sineView.tR.y*totalTime)/Double(v1)
+//        let duration = (margin*w_t/sineView.tR.y*totalTime)/v
         
         //误差时间（DispatchQueue每轮代码运行耗时）
         offsetTime += Date().timeIntervalSince(nowDate)
@@ -705,6 +826,7 @@ class CustomSineCurveView: UIView {
         let offT = offsetTime
         self.offsetTime = 0.0
         
+        workItem.cancel()
         workItem = DispatchWorkItem {
             [weak self,rec,nowD] in
             guard let this = self else {return}
@@ -827,7 +949,7 @@ class CustomSineCurveCanvas:UIView {
         let path = UIBezierPath()
         path.lineWidth = 1.5
         UIColor(red: 1, green: 209/255, blue: 90/255, alpha: 1).setStroke()
-        for i in 0...funcParamsArr.count-1 {
+        for i in 0..<funcParamsArr.count {
             
             let funcParams:MonotonicSineCurveModel = funcParamsArr[i]
             

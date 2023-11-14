@@ -25,8 +25,8 @@ class CustomSineCurveModel: NSObject {
         }
     }
     
-    //是否开启智能补帧
-    var isSmartFillFrame = false
+    //是否开启智能补帧(默认开启)
+    var isSmartFillFrame = true
 
     
     //时间最大百分值 %
@@ -42,13 +42,15 @@ class CustomSineCurveModel: NSObject {
     //（视图）高度h阈值
     var hR:CGPoint = CGPointMake(0.0, 180.0)
     
+    
+    
     //根据控制点和画布参数创建单调曲线模型组（不画曲线时，画布参数可忽略）
     func createModelArr(_ pArr:[CGPoint]) -> [MonotonicSineCurveModel] {
         var arr:[MonotonicSineCurveModel] = []
         if pointArr.count > 1 {
             
             //从第二个点开始创建model
-            for i in 1...pointArr.count-1{
+            for i in 1..<pointArr.count{
                 let start = pointArr[i-1]
                 let end = pointArr[i]
                 
@@ -102,12 +104,34 @@ class CustomSineCurveModel: NSObject {
             }
             let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
             
-            timePercent += interval/v
+            //速度微调，暂时采纳
+            let v1 = CustomSineCurveModel.calculateNewSpeedValue(Float(v))
+
+            timePercent += interval/Double(v1)
+            
+//            timePercent += interval/v
         }
         
         let finalTime = totalTime * (timePercent / maxTimePercent)
         return finalTime
     }
+    
+    //曲线变速误差兼容，暂时这么改
+  class  func calculateNewSpeedValue(_ A: Float) -> Float {
+        //只处理曲线变速
+      let isJumpDeal =  A == 1.0 ? true : false
+        if(isJumpDeal) { return A }
+        if A >= 0.1 && A <= 0.2 {
+            return A + 0.2
+        } else if A > 0.2 && A <= 0.5 {
+            let diff = 0.5 - 0.4
+            let ratio = (A - 0.2) / (0.5 - 0.2)
+            return 0.4 + Float(diff) * ratio
+        } else {
+            return A
+        }
+    }
+
 }
 /*
     y = a*sin(w*x + p) + d
@@ -267,7 +291,8 @@ class MonotonicSineCurveModel: NSObject {
         return h
     }
     
-    //变式二、解sine函数公式得到v (t为百分值)
+    //变式二、解sine函数公式得到v (t为百分值(0~100))
+    //注：该t为该单调sine曲线段内的值，起点是vtP0，t = currentT - vtP0.x
     // t => v
     func solveSineFuncGetVWithT(_ t:CGFloat) -> CGFloat {
         let x = getXWithT(t)
@@ -382,4 +407,21 @@ class MonotonicSineCurveModel: NSObject {
     }
     
     
+}
+
+
+extension CGFloat {
+    var double: Double {
+        return Double(self)
+    }
+}
+
+extension Double {
+    /// 四舍五入
+    /// - Parameter places: 几位小数
+    /// - Returns: 保留小数后的数
+    func roundTo(places:Int) -> Double {
+        let divisor = pow(10.0, Double(places))
+        return (self * divisor).rounded() / divisor
+    }
 }
