@@ -737,7 +737,7 @@ class CustomSineCurveView: UIView {
             
             timeLineState = .isPanOnlyLine
            
-            let v = sinModel.solveSineFuncGetVWithT(t-sinModel.vtP0.x)
+            let v = sinModel.solveSineFuncGetVWithT(t)
             
             setTimeLineTo(point: CGPointMake(t, v))
             
@@ -839,46 +839,6 @@ class CustomSineCurveView: UIView {
         
     }
     
-    //    //锁定某时间对应的函数模型
-    //    @objc func findSineModel(x:CGFloat)->MonotonicSineCurveModel{
-    //        for model in sineView.funcParamsArr {
-    //            if model.vtP0.x <= x && x <= model.vtP1.x {
-    //                return model
-    //            }
-    //        }
-    //        return MonotonicSineCurveModel(vtP0: CGPointMake(0.0, 1.0), vtP1: CGPointMake(100, 1.0))
-    //    }
-    //
-    //    //某时刻的速度
-    //    func getValueWithTime(_ t:CGFloat)->CGFloat{
-    //
-    //        let model = findSineModel(x: t)
-    //        let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
-    //
-    //        return v
-    //    }
-    //
-    //    //变速后的总时间
-    //    func getFinallyTime() -> TimeInterval {
-    //        var t = 0.0
-    //        var timePercent = 0.0
-    //
-    //        while t < maxTime {
-    //            let interval = 1.0
-    //
-    //            t += interval
-    //            t = min(t, maxTime)
-    //
-    //            let model = findSineModel(x: t)
-    //
-    //            let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
-    //
-    //            timePercent += interval/v
-    //        }
-    //
-    //        let finalTime = totalTime * (timePercent / maxTime)
-    //        return finalTime
-    //    }
     
 }
 
@@ -955,11 +915,11 @@ class CustomSineCurveCanvas:UIView {
             
             
             //w:视图坐标系x轴的值
-            var w: CGFloat = 0
-            path.move(to: CGPoint(x: funcParams.whP0.x, y: funcParams.solveSineFuncGetHWithW(w)))
-            while w < (funcParams.whP1.x - funcParams.whP0.x) {
+            var w: CGFloat = funcParams.whP0.x
+            path.move(to: CGPoint(x: w, y: funcParams.solveSineFuncGetHWithW(w)))
+            while w < funcParams.whP1.x {
                 w += step
-                path.addLine(to: CGPoint(x: funcParams.whP0.x+w, y: funcParams.solveSineFuncGetHWithW(w)))
+                path.addLine(to: CGPoint(x: w, y: funcParams.solveSineFuncGetHWithW(w)))
             }
             
             

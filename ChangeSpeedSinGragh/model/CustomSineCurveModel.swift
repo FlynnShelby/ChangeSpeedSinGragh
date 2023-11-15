@@ -81,7 +81,7 @@ class CustomSineCurveModel: NSObject {
               let model = res["model"] as? MonotonicSineCurveModel else {
             return 0.0
         }
-        let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
+        let v = model.solveSineFuncGetVWithT(t)
         
         return v
     }
@@ -102,7 +102,7 @@ class CustomSineCurveModel: NSObject {
                   let model = res["model"] as? MonotonicSineCurveModel else {
                 return 0.0
             }
-            let v = model.solveSineFuncGetVWithT(t-model.vtP0.x)
+            let v = model.solveSineFuncGetVWithT(t)
             
             //速度微调，暂时采纳
             let v1 = CustomSineCurveModel.calculateNewSpeedValue(Float(v))
@@ -239,13 +239,13 @@ class MonotonicSineCurveModel: NSObject {
         T = abs(p1.x-p0.x)*2
         w = 2*CGFloat.pi/T
         if p0.y < p1.y {//上升
-            offsetX =  -T/4
+            p = -CGFloat.pi/2.0
             d = p0.y + a
         }else{//下降
-            offsetX =  T/4
+            p = CGFloat.pi/2.0
             d = p1.y + a
         }
-        p = w*offsetX
+        offsetX0 = -p0.x
         
         
          
@@ -265,7 +265,7 @@ class MonotonicSineCurveModel: NSObject {
     
     //x偏移量，<0右移，>0左移
     //注：变速曲线只取两点之间单调上升或下降的部分，因此需偏移1/4个周期
-    private var offsetX: CGFloat = -200.0/4
+    private var offsetX0: CGFloat = 0
     
     //参数p
     private var p:CGFloat = -CGFloat.pi/2
@@ -279,7 +279,7 @@ class MonotonicSineCurveModel: NSObject {
     //解sine函数公式得到y
     // x => y
     func solveSineFuncGetYWithX(_ x:CGFloat) -> CGFloat {
-        return  a*sin(w*x+p)+d
+        return  a*sin(w*(x+offsetX0)+p)+d
     }
     
     //变式一、解sine函数公式得到h
