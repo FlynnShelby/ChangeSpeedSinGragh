@@ -144,7 +144,7 @@ class CustomSineCurveView: UIView {
             updateBtnState()
             
 //            //变速后总时间s
-//            finalTimeLab.text = String(format: "%.1fs", curveModel.getFinallyTime())
+            finalTimeLab.text = String(format: "%.1fs", curveModel.getFinallyTime())
             
             currentPointBlock?(currentPoint,curveModel,timeLineState)
         }
